@@ -1047,12 +1047,10 @@ static inline void perf_fetch_caller_regs(struct pt_regs *regs)
 	perf_arch_fetch_caller_regs(regs, CALLER_ADDR0);
 }
 
-static __always_inline void
-perf_sw_event(u32 event_id, u64 nr, struct pt_regs *regs, u64 addr)
-{
-	if (static_key_false(&perf_swevent_enabled[event_id]))
-		__perf_sw_event(event_id, nr, regs, addr);
-}
+#define perf_sw_event(event_id, nr, regs, addr) ({ \
+	if (static_key_false(&perf_swevent_enabled[event_id])) \
+		__perf_sw_event(event_id, nr, regs, addr); \
+})
 
 DECLARE_PER_CPU(struct pt_regs, __perf_regs[4]);
 
